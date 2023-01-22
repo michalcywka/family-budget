@@ -1,0 +1,5 @@
+psycopg2-binary
+flask_sqlalchemy
+marshmallow-sqlalchemy
+connexion[swagger-ui]
+flask

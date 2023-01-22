@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: "Family Budget REST API"
+  description: "Sample API"
+  version: "0.0.1"
+
+servers:
+  - url: "/api"
+
+paths:
+  /users:
+    get:
+      operationId: "accounts.get_all"
+      responses:
+        "200":
+          description: "Successfully read accounts list"
+  
+  /try_login:
+    post:
+      operationId: "accounts.try_login"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "body"
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                passwdhash:
+                  type: "string"
+      responses:
+        "200":
+          description: "Login permitted"
+        "401":
+          description: "Wrong login credentials"
