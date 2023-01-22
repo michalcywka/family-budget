@@ -1,7 +1,9 @@
 from setup import db, ma
 
 class Account(db.Model):
-
+    """
+    Account table model.
+    """
     __tablename__ = "account"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -9,6 +11,9 @@ class Account(db.Model):
     password = db.Column(db.String(64))
 
 class AccountSchema(ma.SQLAlchemyAutoSchema):
+    """
+    Marshmallow schema for Account table model.
+    """
     class Meta:
         model = Account
         load_instance = True

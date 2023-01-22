@@ -34,3 +34,22 @@ paths:
           description: "Login permitted"
         "401":
           description: "Wrong login credentials"
+  /try_create_account:
+    post:
+      operationId: "accounts.try_create_account"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "body"
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                passwdhash:
+                  type: "string"
+      responses:
+        "200":
+          description: "User created"
+        "400":
+          description: "User already exists"

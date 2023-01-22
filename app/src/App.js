@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Layout, Input, notification } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import './App.css';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -42,11 +41,14 @@ function App() {
   const [form] = Form.useForm();
   const [username, setUsername] = useState(undefined);
   const [headerBanner, setHeaderBanner] = useState(undefined);
+  const [isLoginForm, setIsLoginForm] = useState(true); //false means "register mode"
 
 
   useEffect(() => {
-    const login = () => { setUsername(username ? undefined : "admin") }
+    const logout = () => {setUsername(undefined)};
+    const toggleRegisterForm = () => {setIsLoginForm(!isLoginForm)};
     const onFinish = async (values) => {
+      if(isLoginForm){
       await fetch(`${API_URL}/try_login`, {
         method: 'POST',
         headers: {
@@ -67,6 +69,32 @@ function App() {
       }).catch((err) => console.log("error"));
 
       console.log('Finish:', values);
+    } else {
+      await fetch(`${API_URL}/try_create_account`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: values.username, passwdhash: values.password })
+      }).then((response) => {
+        if(response.ok) {
+          notification.open({
+            message: 'Account has been created',
+            description:
+              'You can now use your credentials to log in.',
+          });
+        }
+        else {
+          notification.open({
+            message: 'Wrong credentials',
+            description:
+              'Username already exists',
+          });
+        }
+      }).catch((err) => console.log("error"));
+
+      console.log('Finish:', values);
+    }
     };
     const loginForm =
       <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
@@ -97,20 +125,21 @@ function App() {
           />
         </Form.Item>
         <Form.Item shouldUpdate>
-          {() => (
+          {() => (<>
             <Button
-              type="primary"
+              type={isLoginForm ? "primary" : "default"}
               htmlType="submit"
             >
-              Log in
-            </Button>
-          )}
+              {isLoginForm ? "Log in" : "Register"}
+            </Button> 
+            {" "}Or <Button style={{padding: "0px"}} type="link" onClick={toggleRegisterForm}>{isLoginForm ? "register now!" : "go back to login."}</Button></>)}
         </Form.Item>
       </Form>
+      console.log(isLoginForm);
     setHeaderBanner(username ?
-      <><span>Welcome {username}</span> <Button onClick={login}>Log out</Button></> :
+      <><span>Welcome {username}</span> <Button onClick={logout}>Log out</Button></> :
       <>{loginForm}</>);
-  }, [form, username]);
+  }, [form, username, isLoginForm]);
 
   return (
     <Layout>
@@ -119,7 +148,7 @@ function App() {
         <Sider style={siderStyle}>Sider</Sider>
         <Content style={contentStyle}>Content</Content>
       </Layout>
-      <Footer style={footerStyle}>Footer</Footer>
+      <Footer style={footerStyle}>Family budget Example APP</Footer>
     </Layout>
   );
 }
