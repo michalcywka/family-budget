@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Layout, Input, notification } from 'antd';
+import { Button, Form, Layout, Input, notification, Col, Card, Row } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -45,56 +45,56 @@ function App() {
 
 
   useEffect(() => {
-    const logout = () => {setUsername(undefined)};
-    const toggleRegisterForm = () => {setIsLoginForm(!isLoginForm)};
+    const logout = () => { setUsername(undefined) };
+    const toggleRegisterForm = () => { setIsLoginForm(!isLoginForm) };
     const onFinish = async (values) => {
-      if(isLoginForm){
-      await fetch(`${API_URL}/try_login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: values.username, passwdhash: values.password })
-      }).then((response) => {
-        if(response.ok) {
-        setUsername(values.username);
-        }
-        else {
-          notification.open({
-            message: 'Wrong credentials',
-            description:
-              'Wrong password or username',
-          });
-        }
-      }).catch((err) => console.log("error"));
+      if (isLoginForm) {
+        await fetch(`${API_URL}/try_login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: values.username, passwdhash: values.password })
+        }).then((response) => {
+          if (response.ok) {
+            setUsername(values.username);
+          }
+          else {
+            notification.open({
+              message: 'Wrong credentials',
+              description:
+                'Wrong password or username',
+            });
+          }
+        }).catch((err) => console.log("error"));
 
-      console.log('Finish:', values);
-    } else {
-      await fetch(`${API_URL}/try_create_account`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: values.username, passwdhash: values.password })
-      }).then((response) => {
-        if(response.ok) {
-          notification.open({
-            message: 'Account has been created',
-            description:
-              'You can now use your credentials to log in.',
-          });
-        }
-        else {
-          notification.open({
-            message: 'Wrong credentials',
-            description:
-              'Username already exists',
-          });
-        }
-      }).catch((err) => console.log("error"));
+        console.log('Finish:', values);
+      } else {
+        await fetch(`${API_URL}/try_create_account`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: values.username, passwdhash: values.password })
+        }).then((response) => {
+          if (response.ok) {
+            notification.open({
+              message: 'Account has been created',
+              description:
+                'You can now use your credentials to log in.',
+            });
+          }
+          else {
+            notification.open({
+              message: 'Wrong credentials',
+              description:
+                'Username already exists',
+            });
+          }
+        }).catch((err) => console.log("error"));
 
-      console.log('Finish:', values);
-    }
+        console.log('Finish:', values);
+      }
     };
     const loginForm =
       <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
@@ -131,11 +131,11 @@ function App() {
               htmlType="submit"
             >
               {isLoginForm ? "Log in" : "Register"}
-            </Button> 
-            {" "}Or <Button style={{padding: "0px"}} type="link" onClick={toggleRegisterForm}>{isLoginForm ? "register now!" : "go back to login."}</Button></>)}
+            </Button>
+            {" "}Or <Button style={{ padding: "0px" }} type="link" onClick={toggleRegisterForm}>{isLoginForm ? "register now!" : "go back to login."}</Button></>)}
         </Form.Item>
       </Form>
-      console.log(isLoginForm);
+    console.log(isLoginForm);
     setHeaderBanner(username ?
       <><span>Welcome {username}</span> <Button onClick={logout}>Log out</Button></> :
       <>{loginForm}</>);
@@ -146,7 +146,25 @@ function App() {
       <Header style={headerStyle}>{headerBanner}</Header>
       <Layout>
         <Sider style={siderStyle}>Sider</Sider>
-        <Content style={contentStyle}>Content</Content>
+        <Content style={contentStyle}> <div className="site-card-wrapper">
+          <Row gutter={16}>
+            <Col span={8}>
+              <Card title="Card title" bordered={false}>
+                Card content
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="Card title" bordered={false}>
+                Card content
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card title="Card title" bordered={false}>
+                Card content
+              </Card>
+            </Col>
+          </Row>
+        </div></Content>
       </Layout>
       <Footer style={footerStyle}>Family budget Example APP</Footer>
     </Layout>

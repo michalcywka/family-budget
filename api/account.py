@@ -4,13 +4,16 @@ from setup import db
 
 def get_all():
     """
-    Get all accounts
+    Get all accounts.
     """
     users = Account.query.all()
     return accounts_schema.dump(users)
 
 
 def try_login(body):
+    """
+    Called when trying to login.
+    """
     user = Account.query.filter(Account.username == body['username'],
                                 Account.password == body['passwdhash']).one_or_none()
 
@@ -19,6 +22,9 @@ def try_login(body):
     return {"found": False}, 401
 
 def try_create_account(body):
+    """
+    Called when trying to register a new account. If username already exists, return 400.
+    """
     user = Account.query.filter(Account.username == body['username']).all()
     if len(user) == 0:
         new_account = Account()

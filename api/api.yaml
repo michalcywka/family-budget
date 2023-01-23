@@ -10,14 +10,14 @@ servers:
 paths:
   /users:
     get:
-      operationId: "accounts.get_all"
+      operationId: "account.get_all"
       responses:
         "200":
           description: "Successfully read accounts list"
   
   /try_login:
     post:
-      operationId: "accounts.try_login"
+      operationId: "account.try_login"
       requestBody:
         content:
           application/json:
@@ -36,7 +36,7 @@ paths:
           description: "Wrong login credentials"
   /try_create_account:
     post:
-      operationId: "accounts.try_create_account"
+      operationId: "account.try_create_account"
       requestBody:
         content:
           application/json:
