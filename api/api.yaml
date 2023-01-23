@@ -8,14 +8,14 @@ servers:
   - url: "/api"
 
 paths:
-  /users:
+  /account:
     get:
       operationId: "account.get_all"
       responses:
         "200":
           description: "Successfully read accounts list"
   
-  /try_login:
+  /account/try_login:
     post:
       operationId: "account.try_login"
       requestBody:
@@ -34,7 +34,8 @@ paths:
           description: "Login permitted"
         "401":
           description: "Wrong login credentials"
-  /try_create_account:
+
+  /account/try_create_account:
     post:
       operationId: "account.try_create_account"
       requestBody:
@@ -53,3 +54,16 @@ paths:
           description: "User created"
         "400":
           description: "User already exists"
+
+  /budget/{user_id}:
+    get:
+      operationId: "budget.get_by_user"
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: "List of all budgets available for a user"

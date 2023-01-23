@@ -39,17 +39,60 @@ const footerStyle = {
 
 function App() {
   const [form] = Form.useForm();
-  const [username, setUsername] = useState(undefined);
+  const [account, setAccount] = useState(undefined);
   const [headerBanner, setHeaderBanner] = useState(undefined);
   const [isLoginForm, setIsLoginForm] = useState(true); //false means "register mode"
-
+  const [budgets, setBudgets] = useState(undefined);
+  const [budgetCards, setBudgetCards] = useState(<></>)
 
   useEffect(() => {
-    const logout = () => { setUsername(undefined) };
+    const getBudgets = async () => {
+      await fetch(`${API_URL}/budget/${account.id}`, {
+        method: 'GET',
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then(body => { console.log(body); setBudgets(body); })
+
+        }
+        else {
+          console.log("Error fetching data")
+        }
+      })
+
+    }
+    if (account !== undefined) {
+      getBudgets();
+    }
+  }, [account])
+
+  useEffect(() => {
+    if (account === undefined || budgets === undefined) {
+      setBudgetCards(<></>);
+    } else {
+      console.log(budgets);
+      let cards = budgets.map((budget) => {
+        return (<Col span={8}>
+          <Card title={budget.name} bordered={false}>
+            {budget.income}
+          </Card>
+        </Col>)
+      });
+      console.log(cards);
+      setBudgetCards(
+        <div className="site-card-wrapper">
+          <Row gutter={16}>
+            {cards}
+          </Row>
+        </div>
+      )
+    }
+  }, [account, budgets])
+  useEffect(() => {
+    const logout = () => { setAccount(undefined) };
     const toggleRegisterForm = () => { setIsLoginForm(!isLoginForm) };
     const onFinish = async (values) => {
       if (isLoginForm) {
-        await fetch(`${API_URL}/try_login`, {
+        await fetch(`${API_URL}/account/try_login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -57,7 +100,10 @@ function App() {
           body: JSON.stringify({ username: values.username, passwdhash: values.password })
         }).then((response) => {
           if (response.ok) {
-            setUsername(values.username);
+            response.json().then(body => {
+              console.log("response " + body);
+              setAccount({ username: values.username, id: body.user_id });
+            });
           }
           else {
             notification.open({
@@ -70,7 +116,7 @@ function App() {
 
         console.log('Finish:', values);
       } else {
-        await fetch(`${API_URL}/try_create_account`, {
+        await fetch(`${API_URL}/account/try_create_account`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -135,36 +181,19 @@ function App() {
             {" "}Or <Button style={{ padding: "0px" }} type="link" onClick={toggleRegisterForm}>{isLoginForm ? "register now!" : "go back to login."}</Button></>)}
         </Form.Item>
       </Form>
-    console.log(isLoginForm);
-    setHeaderBanner(username ?
-      <><span>Welcome {username}</span> <Button onClick={logout}>Log out</Button></> :
+    setHeaderBanner(account ?
+      <><span>Welcome {account.username}</span> <Button onClick={logout}>Log out</Button></> :
       <>{loginForm}</>);
-  }, [form, username, isLoginForm]);
+  }, [form, account, isLoginForm]);
 
   return (
     <Layout>
       <Header style={headerStyle}>{headerBanner}</Header>
       <Layout>
         <Sider style={siderStyle}>Sider</Sider>
-        <Content style={contentStyle}> <div className="site-card-wrapper">
-          <Row gutter={16}>
-            <Col span={8}>
-              <Card title="Card title" bordered={false}>
-                Card content
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card title="Card title" bordered={false}>
-                Card content
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card title="Card title" bordered={false}>
-                Card content
-              </Card>
-            </Col>
-          </Row>
-        </div></Content>
+        <Content style={contentStyle}>
+          {budgetCards}
+        </Content>
       </Layout>
       <Footer style={footerStyle}>Family budget Example APP</Footer>
     </Layout>

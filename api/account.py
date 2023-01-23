@@ -1,4 +1,3 @@
-# from setup import db
 from models import Account, accounts_schema
 from setup import db
 
@@ -18,8 +17,8 @@ def try_login(body):
                                 Account.password == body['passwdhash']).one_or_none()
 
     if user is not None:
-        return {"found": True}, 200
-    return {"found": False}, 401
+        return {"user_id": user.id}, 200
+    return {"user_id": None, "error": "Wrong user or password"}, 401
 
 def try_create_account(body):
     """
@@ -32,6 +31,6 @@ def try_create_account(body):
         new_account.password = body['passwdhash']
         db.session.add(new_account)
         db.session.commit()
-        return {"userCreated": True}, 200
+        return {"user_id": new_account.id}, 200
 
-    return {"userCreated": False, "error": "Username already exists"}, 400
+    return {"user_id": None, "error": "Username already exists"}, 400

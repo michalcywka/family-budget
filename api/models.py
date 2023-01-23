@@ -92,8 +92,8 @@ class AccountBudget(db.Model):
     """
     __tablename__ = "account_budget"
     id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer)
-    budget_id = db.Column(db.Integer)
+    account_id = db.Column(db.Integer, db.ForeignKey("account.id"))
+    budget_id = db.Column(db.Integer, db.ForeignKey("budget.id"))
 
 
 class AccountBudgetSchema(ma.SQLAlchemyAutoSchema):
